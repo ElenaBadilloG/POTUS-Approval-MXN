@@ -36,7 +36,7 @@ pollAp<-summaryBy(Approve ~ end_date, data=pollsub,
 pollDp<-summaryBy(Disapprove ~ end_date, data=pollsub,
                  FUN = list(mean, max, min, median, sd))
 
-############ FX Data (Mexican Peso)
+########################## FX Data (Mexican Peso)
 
 ## Download From Quandl (source: St. Louis Federal Reserve)
 
@@ -64,14 +64,14 @@ pollDp$peso[1]<-pollDp$peso[2] #Fill the first value (because it's missing here)
 pollDp$peso<-data.frame(na.approx(pollDp$peso, na.rm = FALSE)) #linearly interpolate NA values (weekends) for FX data in roder to merge w/poll data*
 pollDp$Ap<-pollAp$Approve.mean #Add Approval rating to pollDp
 pollmean<-pollDp[,c(1,2,7,8)] #Subset columns of interest (we want MEAN disapproval rate)
-colnames(pollmean) <- c("end_date","Disapprove","TCN","Ap")
+colnames(pollmean) <- c("end_date","Disapprove","TCN","Approve")
 
 pollmelt<-melt(pollmean[,-3], id="end_date")
 colnames(pollmelt) <- c("Date","Rating", "Value")
 
-################### Plots
+############################ Plots
 
-## Approval & Disapproval
+### Approval & Disapproval
 pollmelt$Value<-as.numeric(pollmelt$Value)
 pollmelt$Date<-as.Date(pollmelt$Date)
 
@@ -90,30 +90,27 @@ ggsave(filename="App_and_Disapp_DT.jpg", width=11, height=7) #save plot in jpg f
 
 ### Disapproval vs. Mexican Peso
 
+## Time series
+
 #Normalize data to 1st observation-date (Jan 22 2017): for visualization purposes (original FX and Approval data is in very  different scales)
-
-fechaN<-"2017-01-22"
-
-normR<-pollmeanT[pollmeanT$end_date == fechaN,]
-# normR<-data.frame(t(normR))
+dateN<-"2017-01-22"
+normR<-pollmeanT[pollmeanT$end_date == dateN,]
 normR <- data.frame(normR[rep(row.names(normR), nrow(pollmeanT)),])
 
 Norm<-data.frame(pollmeanT/normR)
 Norm$end_date<-pollmeanT$end_date
-colnames(Norm) <- c("end_date","Desaprueba (índice=1, 22/01/17)","TCN (índice=1, 22/01/17)")
+colnames(Norm) <- c("end_date","Disapproves (index=1, 22/01/17)","TCN (index=1, 22/01/17)")
 
 # Melt dataset to plot by factor
-
 Normelt<-melt(Norm, id="end_date")
-colnames(Normelt) <- c("Fecha","Var","Value")
+colnames(Normelt) <- c("Date","Var","Value")
 Normelt$Value<-as.numeric(Normelt$Value)
-Normelt$Fecha<-as.Date(Normelt$Fecha)
+Normelt$Date<-as.Date(Normelt$Date)
 0.15
 broad=0.02
-g2<-ggplot(Normelt, aes(x = Fecha,y = Value, group=Var, colour= Var)) +
+g2<-ggplot(Normelt, aes(x = Date,y = Value, group=Var, colour= Var)) +
     geom_line(size=0.2, alpha=0.5)+
     geom_smooth(method="loess",span=soft, se = TRUE)+
-    #geom_smooth(method="lm", formula = y ~ splines::bs(x, 4), span=0.12, se=FALSE)+
     theme(axis.text.x =element_text(size  = 10,
                                     angle = 90,
                                     hjust = 1,                                
@@ -122,14 +119,13 @@ g2
 
 ggsave(filename="Mexican_Peso_vs_DT_ts.jpg", width=11, height=7)
 
-# Scatterplot: Mexican Peso vs. Trump Approval
+## Scatterplot
 
 g2<-ggplot(pollmean, aes(x=Disapprove, y=TCN))
 g2<-g2+xlab("Trump Approval Rating (%)")
 g2<-g2+ylab("Peso (MX/USD)")
 g2<-g2+geom_point(size=4, color="red",alpha=0.2)
 g2<-g2+geom_smooth(method="lm",  linetype="dashed",color="black", size=0.5,se = TRUE)
-# g2<-g2+theme_light()
 g2
 
 ggsave(filename="Mexican_Peso_vs_DT_scatter.jpg", width=11, height=7)
