@@ -132,7 +132,7 @@ ggsave(filename="Mexican_Peso_vs_DT_ts.jpg", width=11, height=7)
 
 ## Scatterplot
 
-g2<-ggplot(pollmean, aes(x=Disapprove, y=TCN))
+g2<-ggplot(pollmean, aes(x=Approve, y=TCN))
 g2<-g2+xlab("Trump Approval Rating (%)")
 g2<-g2+ylab("Peso (MX/USD)")
 g2<-g2+geom_point(size=4, color="red",alpha=0.2)
