@@ -22,8 +22,8 @@ download.file(fileURL,destfile="./polls17.tsv")
 poll<-read.table("./polls17.tsv", sep = '\t', header = TRUE)
 surveyHouses<-data.frame(levels(poll$survey_house)) #names of all surveyers
 
-#Subset (All Adults) *Rasmussen and PPP publish "Likely Voters" instead of Adults
-pollsub <- subset(poll, poll$sample_subpopulation== "Adults" | poll$sample_subpopulation=="Likely Voters")
+#Subset (All Adults) some publish "Likely Voters" or "Registered Voters" instead of Adults
+pollsub <- subset(poll, poll$sample_subpopulation== "Adults" | poll$sample_subpopulation=="Likely Voters" | poll$sample_subpopulation=="Registered Voters")
 
 # Average Approval by Survey House
 
