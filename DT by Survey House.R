@@ -1,3 +1,4 @@
+
 #######################################################################################################################################################
 ########################################  Trump Approval by Survey House #############################################################################
 ############################################### Elena Badillo Goicoechea, June 21 2017 ################################################################
@@ -57,3 +58,51 @@ g4<-ggplot(dmean, aes(x = Survey_House, y = Approval, fill = Survey_House)) +
 g4
 
 ggsave(filename="Avg_App_by_Survey_House.jpg", width=11, height=7)
+
+############# Individual Time Series 
+k<-nrow(dmean)
+polls<-data.frame(pollsub$end_date)
+listdf <- list()
+i<-c(1:k)
+for (i in 1:k){
+        polls<- subset(pollsub, pollsub$survey_house==surveyHouses[i])
+        listdf[[i]] <-polls
+        assign(paste('SH',i,sep=''),polls)
+}
+
+Gallup<-SH8[,c("end_date", "Approve")]
+YG_Economist<-SH28[,c("end_date", "Approve")]
+Rasmussen<-SH24[,c("end_date", "Approve")]
+Ipsos_Reuters<-SH14[,c("end_date", "Approve")]
+Politico<-SH21[,c("end_date", "Approve")]
+SurveyMonkey<-SH27[,c("end_date", "Approve")]
+options(warn=-1) #disable warnings
+
+df <- join_all(list(Gallup,YG_Economist,Ipsos_Reuters,SurveyMonkey, Politico, Rasmussen), by = "end_date",type = "left", match = "all")
+df<-data.frame(df)
+colnames(df)<-c("Date", "Gallup","YG_Economist","Ipsos_Reuters","SurveyMonkey", "Politico", "Rasmussen")
+
+for (j in 3:7){
+        df[,j]<-na.approx(df[,j], na.rm = FALSE)
+}
+
+df<-melt(df, id="Date")
+
+colnames(df) <- c("Date","SurveyHouse", "Approval")
+polpalette2<-polpalette[c(11,13,19,22,25,28)] #main sh colors
+
+gM <- ggplot(df, aes(x = as.Date(Date),y = Approval, group=SurveyHouse, colour= SurveyHouse)) +
+        scale_color_manual(values=polpalette2)+
+        geom_line(size=1, alpha=1)+
+        #geom_smooth(method="loess", span=soft)+ #loess=Polynomial Regression Fitting
+        coord_cartesian(ylim=c(30,60))+scale_x_date(date_breaks = "1 week")+
+        ggtitle("Approval Rating by Main Survey Houses (%)")+
+        theme(plot.title = element_text(family = "Trebuchet", size=15,colour = "blue4",face="bold"),
+              panel.grid.major = element_line(colour = "grey80"),
+              panel.grid.minor = element_line(colour = "grey80"),
+              axis.text.x =element_text(size  = 8,angle = 90, hjust = 1,  vjust = 1),
+              axis.text.y =element_text(size  = 10))+
+        labs(x="Date",y="Approval (%)")
+gM
+
+ggsave(filename="App_by_Main_Survey_House.jpg", width=11, height=7)
