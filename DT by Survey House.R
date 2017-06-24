@@ -93,13 +93,13 @@ polpalette2<-polpalette[c(11,13,19,22,25,28)] #main sh colors
 
 gM <- ggplot(df, aes(x = as.Date(Date),y = Approval, group=SurveyHouse, colour= SurveyHouse)) +
         scale_color_manual(values=polpalette2)+
-        geom_line(size=1, alpha=1)+
-        #geom_smooth(method="loess", span=soft)+ #loess=Polynomial Regression Fitting
+        #geom_line(size=1, alpha=1)+
+        geom_smooth(size=1, alpha=1,method="loess", span=soft, se=FALSE)+ #loess=Polynomial Regression Fitting
         coord_cartesian(ylim=c(30,60))+scale_x_date(date_breaks = "1 week")+
-        ggtitle("Approval Rating by Main Survey Houses (%)")+
+        ggtitle("Approval Rating by Main Survey Houses (smoothed avg., %)")+
         theme(plot.title = element_text(family = "Trebuchet", size=15,colour = "blue4",face="bold"),
-              panel.grid.major = element_line(colour = "grey80"),
-              panel.grid.minor = element_line(colour = "grey80"),
+              panel.grid.major = element_line(colour = "white"),
+              panel.grid.minor = element_line(colour = "white"),
               axis.text.x =element_text(size  = 8,angle = 90, hjust = 1,  vjust = 1),
               axis.text.y =element_text(size  = 10))+
         labs(x="Date",y="Approval (%)")
