@@ -13,7 +13,7 @@ library(ggplot2)
 tlibrary(doBy)
 library(scales)
 library(zoo)
-options(scipen = 999) #disable exponential notation for plots
+toptions(scipen = 999) #disable exponential notation for plots
 
 fileURL<-"http://elections.huffingtonpost.com/pollster/api/v2/questions/00c%20-Pres-45-Trump%20-%20Job%20Approval%20-%20National/poll-responses-clean.tsv"
 download.file(fileURL,destfile="./polls17.tsv")
@@ -23,7 +23,7 @@ download.file(fileURL,destfile="./polls17.tsv")
 hpoll<-read.table("./polls17.tsv", sep = '\t', header = TRUE)
 surveyHouses<-data.frame(levels(poll$survey_house)) #names of all surveyers
 
-#Subset (All Adults) some publish "Likely Voters" or "Registered Voters" instead of Adults
+f#Subset (All Adults) some publish "Likely Voters" or "Registered Voters" instead of Adults
 pollsub <- subset(poll, poll$sample_subpopulation== "Adults" | poll$sample_subpopulation=="Likely Voters" | poll$sample_subpopulation=="Registered Voters")
 
 # Average Approval by Survey House
@@ -33,7 +33,7 @@ pollAp_sh<-summaryBy(Approve ~ survey_house, data=pollsub,
 gshm<-pollAp_sh[order(pollAp_sh$Approve.mean),] #order by min to max mean
 dmean<-shm[,1:2]
 colnames(dmean)<-c("Survey_House", "Approval")
-dmean$Survey_House <- factor(dmean$Survey_House, levels = dmean$Survey_House[order(dmean$Approval)]) #ordenar factores para obtener colores ordenados
+odmean$Survey_House <- factor(dmean$Survey_House, levels = dmean$Survey_House[order(dmean$Approval)]) #ordenar factores para obtener colores ordenados
 
 # Bar plot
 library(RColorBrewer)
@@ -43,7 +43,7 @@ colfunc <- colorRampPalette(c("blue", "red"))
 i#plot(rep(1,n),col=colfunc(n),pch=19,cex=3)
 polpalette<-colfunc(n) #own palette  where blue+dem, red-dem
 
-g4<-ggplot(dmean, aes(x = Survey_House, y = Approval, fill = Survey_House)) + 
+sg4<-ggplot(dmean, aes(x = Survey_House, y = Approval, fill = Survey_House)) + 
     geom_bar(stat = "identity") +
     scale_fill_manual(values=polpalette)+
     xlab("Survey House") + ylab("Trump Approval (%, avg)")+
@@ -90,7 +90,7 @@ df<-melt(df, id="Date")
 
 colnames(df) <- c("Date","SurveyHouse", "Approval")
 polpalette2<-polpalette[c(11,13,19,22,25,28)] #main sh colors
-
+soft<-0.15
 gM <- ggplot(df, aes(x = as.Date(Date),y = Approval, group=SurveyHouse, colour= SurveyHouse)) +
         scale_color_manual(values=polpalette2)+
         #geom_line(size=1, alpha=1)+
