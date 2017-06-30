@@ -108,6 +108,6 @@ gM <- ggplot(df, aes(x = as.Date(Date),y = Approval, group=SurveyHouse, colour= 
           axis.text.x =element_text(size  = 8,angle = 90, hjust = 1,  vjust = 1),
           axis.text.y =element_text(size  = 10))+
     labs(x="Date",y="Approval (%)")
-gM
+gM 
 
 ggsave(filename="App_by_Main_Survey_House.jpg", width=11, height=7)
