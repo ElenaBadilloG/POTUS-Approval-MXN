@@ -43,7 +43,7 @@ colfunc <- colorRampPalette(c("blue", "red"))
 i#plot(rep(1,n),col=colfunc(n),pch=19,cex=3)
 polpalette<-colfunc(n) #own palette  where blue+dem, red-dem
 
-sg4<-ggplot(dmean, aes(x = Survey_House, y = Approval, fill = Survey_House)) + 
+g4<-ggplot(dmean, aes(x = Survey_House, y = Approval, fill = Survey_House)) + 
     geom_bar(stat = "identity") +
     scale_fill_manual(values=polpalette)+
     xlab("Survey House") + ylab("Trump Approval (%, avg)")+
