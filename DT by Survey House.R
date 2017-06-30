@@ -10,10 +10,10 @@ library(data.table)
 library(dplyr)
 library(reshape2)
 library(ggplot2)
-tlibrary(doBy)
+library(doBy)
 library(scales)
 library(zoo)
-toptions(scipen = 999) #disable exponential notation for plots
+options(scipen = 999) #disable exponential notation for plots
 
 fileURL<-"http://elections.huffingtonpost.com/pollster/api/v2/questions/00c%20-Pres-45-Trump%20-%20Job%20Approval%20-%20National/poll-responses-clean.tsv"
 download.file(fileURL,destfile="./polls17.tsv")
