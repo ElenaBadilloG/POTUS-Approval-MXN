@@ -20,27 +20,27 @@ download.file(fileURL,destfile="./polls17.tsv")
 
 # Full Polling Dataset (via HuffPost poll agregator)
 
-hpoll<-read.table("./polls17.tsv", sep = '\t', header = TRUE)
+poll<-read.table("./polls17.tsv", sep = '\t', header = TRUE)
 surveyHouses<-data.frame(levels(poll$survey_house)) #names of all surveyers
 
-f#Subset (All Adults) some publish "Likely Voters" or "Registered Voters" instead of Adults
+#Subset (All Adults) some publish "Likely Voters" or "Registered Voters" instead of Adults
 pollsub <- subset(poll, poll$sample_subpopulation== "Adults" | poll$sample_subpopulation=="Likely Voters" | poll$sample_subpopulation=="Registered Voters")
 
 # Average Approval by Survey House
 
 pollAp_sh<-summaryBy(Approve ~ survey_house, data=pollsub,
                      FUN = list(mean, max, min, median, sd)) #by survey house
-gshm<-pollAp_sh[order(pollAp_sh$Approve.mean),] #order by min to max mean
+shm<-pollAp_sh[order(pollAp_sh$Approve.mean),] #order by min to max mean
 dmean<-shm[,1:2]
 colnames(dmean)<-c("Survey_House", "Approval")
-odmean$Survey_House <- factor(dmean$Survey_House, levels = dmean$Survey_House[order(dmean$Approval)]) #ordenar factores para obtener colores ordenados
+mean$Survey_House <- factor(dmean$Survey_House, levels = dmean$Survey_House[order(dmean$Approval)]) #ordenar factores para obtener colores ordenados
 
 # Bar plot
 library(RColorBrewer)
 
 n<-nrow(dmean)
 colfunc <- colorRampPalette(c("blue", "red"))
-i#plot(rep(1,n),col=colfunc(n),pch=19,cex=3)
+#plot(rep(1,n),col=colfunc(n),pch=19,cex=3)
 polpalette<-colfunc(n) #own palette  where blue+dem, red-dem
 
 g4<-ggplot(dmean, aes(x = Survey_House, y = Approval, fill = Survey_House)) + 
@@ -50,7 +50,7 @@ g4<-ggplot(dmean, aes(x = Survey_House, y = Approval, fill = Survey_House)) +
     coord_cartesian(ylim=c(30,50))+
     ggtitle("Avg. Trump Approval Rating by Survey House (%)")+
     theme(axis.text.x = element_text(size=10, angle=90), legend.position="none",
-l          axis.title = element_text(size=12),
+          axis.title = element_text(size=12),
           axis.text = element_text(size=12),
           plot.title = element_text(size=18))+
     annotate("text", x="AP-NORC", y=46, label= "less pro-Trump", colour="blue")+
