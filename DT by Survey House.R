@@ -2,8 +2,6 @@
 ########################################  Trump Approval by Survey House #############################################################################
 ############################################### Elena Badillo Goicoechea, June 21 2017 ################################################################
 # setwd("C:/YOUR_PREFERRED_WORKING_DIRECTORY")
-#setwd("C:/Users/Helen/Documents/EBG")
-setwd("C:/Users/G13519/Documents/EB/Ejercicio DT/Mayo 2017")
 
 #Required libraries
 
@@ -25,7 +23,10 @@ download.file(fileURL,destfile="./polls17.tsv")
 # Full Polling Dataset (via HuffPost poll agregator)
 
 poll<-read.table("./polls17.tsv", sep = '\t', header = TRUE)
+poll$survey_house<-as.factor(gsub("/", "_", poll$survey_house)) #replace / to avoid symbol confusion
+poll$survey_house<-as.factor(gsub(" ", "_", poll$survey_house))
 surveyHouses<-levels(poll$survey_house) #names of all surveyers
+
 
 #Subset (All Adults) some publish "Likely Voters" or "Registered Voters" instead of Adults
 pollsub <- subset(poll, poll$sample_subpopulation== "Adults" | poll$sample_subpopulation=="Likely Voters" | poll$sample_subpopulation=="Registered Voters")
@@ -47,19 +48,20 @@ colfunc <- colorRampPalette(c("blue", "red"))
 #plot(rep(1,n),col=colfunc(n),pch=19,cex=3)
 polpalette<-colfunc(n) #own palette  where blue+dem, red-dem
 
-g4<-ggplot(dmean, aes(x = Survey_House, y = Approval, fill = Survey_House)) + 
+gB<-ggplot(dmean, aes(x = Survey_House, y = Approval, fill = Survey_House)) + 
     geom_bar(stat = "identity") +
     scale_fill_manual(values=polpalette)+
     xlab("Survey House") + ylab("Trump Approval (%, avg)")+
     coord_cartesian(ylim=c(30,50))+
     ggtitle("Avg. Trump Approval Rating by Survey House (%)")+
-    theme(axis.text.x = element_text(size=10, angle=90), legend.position="none",
+    theme(plot.title = element_text(family = "Trebuchet", size=15,colour = "lightskyblue4",face="bold"),
+          axis.text.x = element_text(size=10, angle=90), legend.position="none",
           axis.title = element_text(size=12),
           axis.text = element_text(size=12),
           plot.title = element_text(size=18))+
     annotate("text", x="AP-NORC", y=46, label= "less pro-Trump", colour="blue")+
     annotate("text", x="Zogby", y=46, label= "more pro-Trump", colour="red")
-g4
+gB
 
 ggsave(filename="Avg_App_by_Survey_House.jpg", width=11, height=7)
 
@@ -71,15 +73,15 @@ i<-c(1:k)
 for (i in 1:k){
     polls<- subset(pollsub, pollsub$survey_house==surveyHouses[i])
     listdf[[i]] <-polls
-    assign(paste('SH',i,sep=''),polls)
+    assign(paste(surveyHouses[i],sep="_"),polls)
 }
 
-Gallup<-SH8[,c("end_date", "Approve")]
-YG_Economist<-SH28[,c("end_date", "Approve")]
-Rasmussen<-SH24[,c("end_date", "Approve")]
-Ipsos_Reuters<-SH14[,c("end_date", "Approve")]
-Politico<-SH21[,c("end_date", "Approve")]
-SurveyMonkey<-SH27[,c("end_date", "Approve")]
+Gallup<-Gallup[,c("end_date", "Approve")]
+YG_Economist<-YouGov_Economist[,c("end_date", "Approve")]
+Rasmussen<-Rasmussen[,c("end_date", "Approve")]
+Ipsos_Reuters<-Ipsos_Reuters[,c("end_date", "Approve")]
+Politico<-Politico_Morning_Consult[,c("end_date", "Approve")]
+SurveyMonkey<-SurveyMonkey[,c("end_date", "Approve")]
 options(warn=-1) #disable warnings
 
 df <- join_all(list(Gallup,YG_Economist,Ipsos_Reuters,SurveyMonkey, Politico, Rasmussen), by = "end_date",type = "left", match = "all")
@@ -93,7 +95,8 @@ for (j in 3:7){
 df<-melt(df, id="Date")
 
 colnames(df) <- c("Date","SurveyHouse", "Approval")
-polpalette2<-polpalette[c(11,13,19,22,25,28)] #main sh colors
+ind<-match(c("Gallup","YouGov_Economist","Ipsos_Reuters","SurveyMonkey", "Politico_Morning_Consult", "Rasmussen"),dmean$Survey_House)
+polpalette2<-polpalette[c(ind[1],ind[2],ind[3],ind[4],ind[5],ind[6])] #main sh colors
 
 soft<-0.15
 gM <- ggplot(df, aes(x = as.Date(Date),y = Approval, group=SurveyHouse, colour= SurveyHouse)) +
@@ -105,9 +108,9 @@ gM <- ggplot(df, aes(x = as.Date(Date),y = Approval, group=SurveyHouse, colour= 
     theme(plot.title = element_text(family = "Trebuchet", size=15,colour = "lightskyblue4",face="bold"),
           panel.grid.major = element_line(colour = "white"),
           panel.grid.minor = element_line(colour = "white"),
-          axis.text.x =element_text(size  = 8,angle = 90, hjust = 1,  vjust = 1),
-          axis.text.y =element_text(size  = 10))+
+          axis.text.x =element_text(size  = 10,angle = 90, hjust = 1,  vjust = 1),
+          axis.text.y =element_text(size  = 11))+
     labs(x="Date",y="Approval (%)")
-gM 
+gM
 
 ggsave(filename="App_by_Main_Survey_House.jpg", width=11, height=7)
