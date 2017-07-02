@@ -25,6 +25,7 @@ download.file(fileURL,destfile="./polls17.tsv")
 poll<-read.table("./polls17.tsv", sep = '\t', header = TRUE)
 poll$survey_house<-as.factor(gsub("/", "_", poll$survey_house)) #replace / to avoid symbol confusion
 poll$survey_house<-as.factor(gsub(" ", "_", poll$survey_house))
+poll$survey_house<-as.factor(gsub("Gravis_Marketing_Orlando_Political_Observer", "GM_Orlando_Political_Obs", poll$survey_house))
 surveyHouses<-levels(poll$survey_house) #names of all surveyers
 
 
