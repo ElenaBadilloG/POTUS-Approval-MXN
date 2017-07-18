@@ -1,19 +1,16 @@
 #######################################################################################################################################################
 ########################################  Trump Approval by Survey House #############################################################################
 ############################################### Elena Badillo Goicoechea, June 21 2017 ################################################################
-#setwd("C:/YOUR_PREFERRED_WORKING_DIRECTORY")
-#setwd("C:/Users/Helen/Documents/EBG")
-setwd("C:/Users/G13519/Documents/EB/Ejercicio DT/Mayo 2017")
-
-#Required libraries
-
 rm(list = ls()) #remove all previous work
+#setwd("C:/YOUR_PREFERRED_WORKING_DIRECTORY")
+#Required libraries
 
 library(data.table)
 library(plyr)
 library(dplyr)
 library(reshape2)
 library(ggplot2)
+library(ggrepel) #auto label placement
 library(doBy)
 library(scales)
 library(zoo)
@@ -50,8 +47,6 @@ dmean$obs<-sho[,2]
 colnames(dmean)<-c("Survey_House", "Approval", "Obs")
 
 #  Scatterplot: Approval vs. No.Obs
-library(ggrepel) #auto label placement
-
 dmean2<-dmean[-c(13,21,23),]
 
 gb2<-ggplot(dmean2, aes(x=Approval, y=Obs))
